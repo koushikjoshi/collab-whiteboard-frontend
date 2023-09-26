@@ -15,7 +15,7 @@ export default function Whiteboard() {
 
   useEffect(() => {
   if (room) {
-    socket = io('http://127.0.0.1:5000');
+    socket = io('https://flask-socketio-service-xok7vv6ada-uc.a.run.app/');
     socket.emit('join', { user: name, room });
 
     socket.on('drawing', (data) => {
