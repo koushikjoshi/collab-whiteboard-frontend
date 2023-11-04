@@ -22,7 +22,7 @@ export default function Whiteboard() {
   const name = useSelector(selectName);
   const router = useRouter();
   const [color, setColor] = useState("black");
-  const { id: room } = router.query;
+  const room = router.asPath.split("/")[2];
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 }); // New state for cursor position
 
   useEffect(() => {
@@ -35,10 +35,13 @@ export default function Whiteboard() {
   }, []);
 
   useEffect(() => {
-    if (!name) {
-      router.push(`/JoinSession?session=${room}`);
+    if (router.isReady) {
+      const room = router.asPath.split("/")[2]; // Extract room id from URL path
+      if (!name) {
+        router.push(`/JoinSession?session=${room}`);
+      }
     }
-  }, []);
+  }, [name, router.asPath, router.isReady]); // Add router.isReady as a dependency
 
   useEffect(() => {
     if (room) {
