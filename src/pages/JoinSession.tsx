@@ -53,7 +53,7 @@ export default function JoinSession() {
             <FormLabel>Session ID</FormLabel>
             <input
               type="text"
-              name="name"
+              name="room"
               placeholder="Enter session ID"
               required
               className="border border-solid border-black px-2 py-2 rounded-lg"
