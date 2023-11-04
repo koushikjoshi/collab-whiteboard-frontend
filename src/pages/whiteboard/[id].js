@@ -3,7 +3,15 @@ import { useSelector } from "react-redux";
 import { selectName } from "../../slices/userSlice";
 import { useRouter } from "next/router";
 import io from "socket.io-client";
-import { Button, Input, Container, Box, Flex, Icon } from "@chakra-ui/react";
+import {
+  Button,
+  Input,
+  Container,
+  Box,
+  Flex,
+  Icon,
+  Toast,
+} from "@chakra-ui/react";
 import { DownloadIcon, CloseIcon } from "@chakra-ui/icons";
 
 let socket;
@@ -28,7 +36,7 @@ export default function Whiteboard() {
 
   useEffect(() => {
     if (!name) {
-      router.push("/JoinSession");
+      router.push(`/JoinSession?session=${room}`);
     }
   }, []);
 
