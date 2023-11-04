@@ -227,9 +227,13 @@ export default function Whiteboard() {
             <canvas
               ref={canvasRef}
               onMouseDown={startDrawing}
+              onTouchStart={startDrawing}
               onMouseUp={stopDrawing}
+              onTouchEnd={stopDrawing}
               onMouseOut={stopDrawing}
+              onTouchCancel={stopDrawing}
               onMouseMove={handleMouseMove}
+              onTouchMove={handleMouseMove}
               style={{ position: "absolute", zIndex: 2 }}
             ></canvas>
           </div>
