@@ -11,8 +11,9 @@ import {
   Flex,
   Icon,
   Toast,
+  useToast,
 } from "@chakra-ui/react";
-import { DownloadIcon, CloseIcon } from "@chakra-ui/icons";
+import { DownloadIcon, CloseIcon, CopyIcon } from "@chakra-ui/icons";
 
 let socket;
 
@@ -97,29 +98,28 @@ export default function Whiteboard() {
   let lastX = 0;
   let lastY = 0;
 
+  let points = [];
+
   const startDrawing = (e) => {
     drawing = true;
-    [lastX, lastY] = [
-      e.clientX - e.target.offsetLeft,
-      e.clientY - e.target.offsetTop,
-    ];
+    const { left, top } = canvasRef.current.getBoundingClientRect();
+    [lastX, lastY] = [e.clientX - left, e.clientY - top];
   };
-
-  let points = [];
 
   const draw = (e) => {
     if (!drawing) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
+    const { left, top } = canvas.getBoundingClientRect();
     ctx.strokeStyle = color;
     ctx.lineWidth = 5;
     ctx.lineJoin = "round";
     ctx.lineCap = "round";
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
-    let newX = e.clientX - e.target.offsetLeft;
-    let newY = e.clientY - e.target.offsetTop;
+    let newX = e.clientX - left;
+    let newY = e.clientY - top;
     ctx.lineTo(newX, newY);
     ctx.stroke();
 
@@ -186,8 +186,9 @@ export default function Whiteboard() {
   };
 
   const handleMouseMove = (e) => {
-    let newX = e.clientX - e.target.offsetLeft;
-    let newY = e.clientY - e.target.offsetTop;
+    const { left, top } = canvasRef.current.getBoundingClientRect();
+    let newX = e.clientX - left;
+    let newY = e.clientY - top;
 
     // Draw the user's name at the current cursor position
     drawName(name, newX, newY);
@@ -201,22 +202,33 @@ export default function Whiteboard() {
     draw(e);
   };
 
+  const toast = useToast();
+
+  const copySessionURL = () => {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      toast({
+        title: "Link copied successfully",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    });
+  };
+
   return (
     <Container
-      maxW="container.xl"
+      maxW="screen"
       centerContent
-      height={"100vh"}
-      className="bg-red-200"
+      className="bg-red-200 w-screen h-screen"
     >
       <Box
-        w="100%"
         h="80vh"
         bg="white"
         boxShadow="xl"
         p={6}
         rounded="md"
         overflow="hidden"
-        className="border-b-[1px] border-solid border-black"
+        className="border-b-[1px] w-screen border-solid border-black"
       >
         <div style={{ position: "relative", width: "100%", height: "100%" }}>
           <div style={{ position: "relative" }}>
@@ -261,9 +273,19 @@ export default function Whiteboard() {
         >
           Clear Screen
         </Button>
+        <Button
+          leftIcon={<CopyIcon />}
+          colorScheme="black"
+          textColor={"black"}
+          variant="solid"
+          onClick={copySessionURL}
+        >
+          Copy Session URL
+        </Button>
         <Input
           type="color"
           value={color}
+          w={"100px"}
           onChange={(e) => setColor(e.target.value)}
         />
       </Flex>
